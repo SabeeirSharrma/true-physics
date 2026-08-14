@@ -60,11 +60,17 @@ public final class TruePhysicsNeoForge {
         }
     }
 
+    /** Clean up when server shuts down. */
+    @SubscribeEvent
+    public void onServerStopping(net.neoforged.neoforge.event.server.ServerStoppingEvent event) {
+        cores.clear();
+    }
+
     private static void onBlockChanged(ServerLevel level, BlockPos pos) {
         PhysicsConfig cfg = PhysicsConfigHolder.get();
         if (!cfg.structuralCollapseEnabled) return;
 
         TruePhysicsCore core = cores.computeIfAbsent(level, TruePhysicsCore::create);
-        core.onBlockChanged(level, pos);
+        core.onBlockChanged(pos);
     }
 }

@@ -6,7 +6,6 @@ import com.sabcancode.truephysics.config.PhysicsConfigHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -16,9 +15,9 @@ import java.util.Set;
  * Collapses unsupported blocks by converting them to vanilla
  * {@link FallingBlockEntity}s. Single responsibility: collapse mechanics.
  *
- * <p>Respects per-event block budget from config. Non-falling blocks
- * (e.g. stone) are replaced with air and spawn a falling entity
- * carrying the original block state.</p>
+ * <p>Respects per-event block budget from config. All blocks — vanilla
+ * and modded — are handled. Works with any block that has a valid
+ * {@link BlockState}.</p>
  */
 public final class FallingBlockCollapseHandler implements CollapseHandler {
 

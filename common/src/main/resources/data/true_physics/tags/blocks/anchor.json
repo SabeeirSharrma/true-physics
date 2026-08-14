@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:bedrock",
+    "minecraft:deepslate",
+    "minecraft:deepslate_bricks",
+    "minecraft:deepslate_tiles",
+    "minecraft:polished_deepslate",
+    "minecraft:end_stone",
+    "minecraft:crying_obsidian",
+    "minecraft:obsidian",
+    "minecraft:ancient_debris",
+    "minecraft:netherite_block"
+  ]
+}

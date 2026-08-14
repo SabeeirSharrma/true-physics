@@ -1,0 +1,5 @@
+{
+  "replace": false,
+  "comment": "Common (c) convention tags for modded block compat. Modpack/mod authors: add your mod's stone-like blocks to c:stone or c:deepslate to automatically be treated as structural.",
+  "values": []
+}

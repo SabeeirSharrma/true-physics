@@ -36,12 +36,14 @@ public final class TruePhysicsCore {
     private final SupportGraph graph;
     private final CollapseHandler collapse;
 
-    /** Lazily constructed per-level; one graph per loaded dimension. */
-    private ServerLevel activeLevel;
+    /** The server level this core is bound to. */
+    private final ServerLevel level;
 
-    public TruePhysicsCore(BlockClassifier classifier,
+    public TruePhysicsCore(ServerLevel level,
+                           BlockClassifier classifier,
                            SupportGraph graph,
                            CollapseHandler collapse) {
+        this.level      = level;
         this.classifier = classifier;
         this.graph      = graph;
         this.collapse   = collapse;
@@ -50,16 +52,22 @@ public final class TruePhysicsCore {
     /**
      * Convenience factory that wires the default implementations
      * (tag classifier, BFS graph, falling-block collapse).
+     *
+     * <p>All blocks — vanilla and modded — are handled via datapack tags
+     * ({@code true_physics:structural}, {@code true_physics:anchor}).
+     * Any block added to these tags (by any mod or modpack) will be
+     * classified automatically.</p>
      */
     public static TruePhysicsCore create(ServerLevel level) {
         BlockClassifier classifier = new TagBlockClassifier();
         SupportGraph graph         = new BfsSupportGraph(level, classifier);
         CollapseHandler collapse   = new FallingBlockCollapseHandler();
-        return new TruePhysicsCore(classifier, graph, collapse);
+        return new TruePhysicsCore(level, classifier, graph, collapse);
     }
 
-    // ── Accessors (for platform event registration) ─────────────────
+    // ── Accessors ──────────────────────────────────────────────────
 
+    public ServerLevel    level()      { return level; }
     public BlockClassifier classifier() { return classifier; }
     public SupportGraph    graph()      { return graph; }
     public CollapseHandler collapse()   { return collapse; }
@@ -70,14 +78,12 @@ public final class TruePhysicsCore {
      * Called by platform event listeners when a block is placed or broken.
      * Marks the affected chunk (and neighbours) dirty for recompute.
      *
-     * @param level the server level
-     * @param pos   the position that changed
+     * @param pos the position that changed
      */
-    public void onBlockChanged(ServerLevel level, BlockPos pos) {
+    public void onBlockChanged(BlockPos pos) {
         PhysicsConfig cfg = PhysicsConfigHolder.get();
         if (!cfg.structuralCollapseEnabled) return;
 
-        this.activeLevel = level;
         ChunkPos chunk = ChunkPos.containing(pos);
         graph.markDirty(chunk);
     }
@@ -89,7 +95,6 @@ public final class TruePhysicsCore {
     public void tick() {
         PhysicsConfig cfg = PhysicsConfigHolder.get();
         if (!cfg.structuralCollapseEnabled) return;
-        if (activeLevel == null) return;
 
         // 1) Recompute dirty chunks (respects bfs/tick budget)
         graph.tick();
@@ -97,7 +102,7 @@ public final class TruePhysicsCore {
         // 2) Collapse any newly-unsupported blocks
         var unsupported = graph.getUnsupportedBlocks();
         if (!unsupported.isEmpty()) {
-            int collapsed = collapse.collapse(activeLevel, unsupported);
+            int collapsed = collapse.collapse(level, unsupported);
             if (collapsed > 0) {
                 TruePhysics.LOGGER.debug("Collapsed {} unsupported blocks", collapsed);
             }

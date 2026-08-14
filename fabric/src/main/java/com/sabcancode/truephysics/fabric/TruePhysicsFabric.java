@@ -7,13 +7,14 @@ import com.sabcancode.truephysics.core.TruePhysicsCore;
 import com.sabcancode.truephysics.platform.true_physics.ConfigLoaderImpl;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.InteractionResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +44,7 @@ public final class TruePhysicsFabric implements ModInitializer {
                 BlockPos pos = hitResult.getBlockPos();
                 onBlockChanged(serverLevel, pos);
             }
-            return net.minecraft.world.InteractionResult.PASS;
+            return InteractionResult.PASS;
         });
 
         // M1 — tick all cores each server tick
@@ -52,6 +53,11 @@ public final class TruePhysicsFabric implements ModInitializer {
                 TruePhysicsCore core = cores.get(level);
                 if (core != null) core.tick();
             }
+        });
+
+        // Cleanup on server stop
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            cores.clear();
         });
     }
 
@@ -64,6 +70,6 @@ public final class TruePhysicsFabric implements ModInitializer {
         if (!cfg.structuralCollapseEnabled) return;
 
         TruePhysicsCore core = cores.computeIfAbsent(level, TruePhysicsCore::create);
-        core.onBlockChanged(level, pos);
+        core.onBlockChanged(pos);
     }
 }
