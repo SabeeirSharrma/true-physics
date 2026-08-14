@@ -5,6 +5,8 @@ import com.sabcancode.truephysics.config.PhysicsConfig;
 import com.sabcancode.truephysics.config.PhysicsConfigHolder;
 import com.sabcancode.truephysics.core.TruePhysicsCore;
 import com.sabcancode.truephysics.platform.true_physics.ConfigLoaderImpl;
+import com.sabcancode.truephysics.registry.ModBlocks;
+import com.sabcancode.truephysics.registry.ModItems;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -30,6 +32,10 @@ public final class TruePhysicsFabric implements ModInitializer {
         PhysicsConfig config = ConfigLoaderImpl.load(
                 FabricLoader.getInstance().getConfigDir());
         TruePhysics.init(config);
+
+        // M2 — register blocks and items
+        ModBlocks.register();
+        ModItems.register();
 
         // M1 — detect player block breaks
         PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {

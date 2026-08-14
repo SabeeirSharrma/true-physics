@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "true_physics:block/support_beam"
+    }
+  }
+}

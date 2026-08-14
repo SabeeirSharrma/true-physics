@@ -5,6 +5,8 @@ import com.sabcancode.truephysics.config.PhysicsConfig;
 import com.sabcancode.truephysics.config.PhysicsConfigHolder;
 import com.sabcancode.truephysics.core.TruePhysicsCore;
 import com.sabcancode.truephysics.platform.true_physics.ConfigLoaderImpl;
+import com.sabcancode.truephysics.registry.ModBlocks;
+import com.sabcancode.truephysics.registry.ModItems;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -30,6 +32,10 @@ public final class TruePhysicsNeoForge {
                 ConfigLoaderImpl.getSpec());
         PhysicsConfig config = ConfigLoaderImpl.load();
         TruePhysics.init(config);
+
+        // M2 — register blocks and items
+        ModBlocks.register();
+        ModItems.register();
 
         // M1 — register event listeners
         NeoForge.EVENT_BUS.register(this);

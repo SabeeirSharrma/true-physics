@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "comment": "Adhesive/glue blocks — transmit support at zero cost in the BFS graph. Modpack/mod authors: add your mod's glue-like blocks here.",
+  "values": [
+    "minecraft:slime_block",
+    "minecraft:honey_block"
+  ]
+}

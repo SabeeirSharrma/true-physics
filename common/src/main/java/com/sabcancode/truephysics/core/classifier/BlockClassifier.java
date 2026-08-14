@@ -16,6 +16,8 @@ public interface BlockClassifier {
     String STRUCTURAL_TAG = "structural";
     /** Block-tag key for blocks that act as anchors (bedrock, deep terrain, etc.). */
     String ANCHOR_TAG     = "anchor";
+    /** Block-tag key for adhesive/glue blocks that transmit support at zero cost. */
+    String ADHESIVE_TAG   = "adhesive";
 
     enum Classification {
         /** Not part of the support graph. */
@@ -23,7 +25,15 @@ public interface BlockClassifier {
         /** Participates in support-distance BFS but is not an anchor. */
         STRUCTURAL,
         /** Treated as distance-0 anchor — structural blocks connect toward these. */
-        ANCHOR
+        ANCHOR,
+        /**
+         * Adhesive / glue block — transmits support at zero cost.
+         * <p>Adhesive blocks act as "conductors" in the BFS: a structural block
+         * connected to an anchor via adhesive has the same support distance as
+         * one directly adjacent to the anchor. If the adhesive path breaks,
+         * all connected blocks in the group fall together.</p>
+         */
+        ADHESIVE
     }
 
     /**

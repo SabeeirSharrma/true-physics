@@ -23,6 +23,10 @@ public final class PhysicsConfig {
     /** Max BFS events processed per server tick. */
     public int structuralMaxBfsPerTick     = 4;
 
+    // ─── Adhesive budgets (M2) ─────────────────────────────────────
+    /** Max distance adhesive can transmit support (0 = unlimited). */
+    public int adhesiveMaxDistance         = 0;
+
     // ─── Item physics budgets (M4) ─────────────────────────────────
     /** Max items being physics-simulated at once. */
     public int itemPhysicsMaxActive        = 64;

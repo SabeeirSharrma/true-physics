@@ -18,6 +18,7 @@ public final class ConfigLoaderImpl {
             cfgStructural, cfgAdhesives, cfgItems, cfgOcean, cfgCaveins, cfgParticles;
     private static ModConfigSpec.IntValue
             cfgBfsBlocks, cfgBfsTick,
+            cfgAdhesiveMaxDist,
             cfgItemActive, cfgItemRest,
             cfgCaveCooldown, cfgCaveBlocks, cfgCaveRadius,
             cfgDiagInterval;
@@ -44,6 +45,11 @@ public final class ConfigLoaderImpl {
                         .defineInRange("maxBlocksPerBfs", 256, 32, 4096);
         cfgBfsTick   = b.comment("Max BFS events processed per tick")
                         .defineInRange("maxBfsPerTick", 4, 1, 64);
+        b.pop();
+
+        b.comment("Adhesive budgets").push("adhesives");
+        cfgAdhesiveMaxDist = b.comment("Max distance adhesive can transmit support (0 = unlimited)")
+                              .defineInRange("maxDistance", 0, 0, 256);
         b.pop();
 
         b.comment("Item physics budgets").push("itemPhysics");
@@ -89,6 +95,8 @@ public final class ConfigLoaderImpl {
 
         c.structuralMaxBlocksPerBfs = cfgBfsBlocks.get();
         c.structuralMaxBfsPerTick   = cfgBfsTick.get();
+
+        c.adhesiveMaxDistance       = cfgAdhesiveMaxDist.get();
 
         c.itemPhysicsMaxActive      = cfgItemActive.get();
         c.itemPhysicsRestThreshold  = cfgItemRest.get();

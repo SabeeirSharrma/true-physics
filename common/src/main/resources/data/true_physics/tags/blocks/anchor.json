@@ -10,6 +10,7 @@
     "minecraft:crying_obsidian",
     "minecraft:obsidian",
     "minecraft:ancient_debris",
-    "minecraft:netherite_block"
+    "minecraft:netherite_block",
+    "true_physics:support_beam"
   ]
 }
