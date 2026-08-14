@@ -16,6 +16,9 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import team.creative.creativecore.CreativeCore;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Centralized item physics engine — the single source of truth for
  * all item physics calculations. Called by the Mixin.
@@ -31,15 +34,34 @@ import team.creative.creativecore.CreativeCore;
  */
 public final class ItemPhysicsEngine {
 
+    /** Set of item entities currently being physics-simulated (for the active cap). */
+    private static final Set<Integer> ACTIVE_ENTITIES = new HashSet<>();
+
     private ItemPhysicsEngine() {}
+
+    /**
+     * Reset the active entity set. Call once per server tick.
+     */
+    public static void resetActiveCount() {
+        ACTIVE_ENTITIES.clear();
+    }
 
     // ─── Pre-tick: gravity + buoyancy ───────────────────────────────
 
     /**
      * Called before vanilla's tick logic. Applies gravity and fluid forces.
+     * Returns false if the item should fall back to vanilla physics (over budget).
      */
-    public static void preTick(ItemEntity item) {
+    public static boolean preTick(ItemEntity item) {
         PhysicsConfig cfg = PhysicsConfigHolder.get();
+
+        // Active-item cap: if too many items are being simulated, skip custom physics
+        int entityId = item.getId();
+        if (ACTIVE_ENTITIES.size() >= cfg.itemPhysicsMaxActive) {
+            ACTIVE_ENTITIES.remove(entityId); // don't leak
+            return false;
+        }
+        ACTIVE_ENTITIES.add(entityId);
 
         // Detect fluid
         Fluid fluid = detectFluid(item);
@@ -52,7 +74,7 @@ public final class ItemPhysicsEngine {
                     item.getDeltaMovement().add(0, -item.getGravity(), 0)
                 );
             }
-            return;
+            return true;
         }
 
         // In fluid — apply buoyancy
@@ -76,6 +98,7 @@ public final class ItemPhysicsEngine {
         }
 
         item.setDeltaMovement(item.getDeltaMovement().add(0, force, 0));
+        return true;
     }
 
     // ─── Post-tick: friction + bounce + slope + rest ─────────────────
@@ -119,7 +142,6 @@ public final class ItemPhysicsEngine {
         } else {
             // In fluid — apply drag via CreativeCore
             if (cfg.itemPhysicsVanillaFlow) {
-                // Use vanilla flow behavior
                 if (item.isInWater() && item.getFluidHeight(FluidTags.WATER) > 0.1F) {
                     ((ItemEntityAccessor) item).callSetUnderwaterMovement();
                 } else if (item.isInLava() && item.getFluidHeight(FluidTags.LAVA) > 0.1F) {
@@ -154,7 +176,6 @@ public final class ItemPhysicsEngine {
 
         if (state.isEmpty() || fluid == null) return null;
 
-        // Check if item is near the fluid surface
         double filled = state.getHeight(level, pos);
         double itemY = item.getY() - pos.getY();
 
@@ -174,7 +195,7 @@ public final class ItemPhysicsEngine {
         if (block == Blocks.SLIME_BLOCK) return 0.8F;
         if (block == Blocks.HONEY_BLOCK) return 0.1F;
         if (block == Blocks.BEDROCK) return 0.0F;
-        return 0.3F; // Default bounce
+        return 0.3F;
     }
 
     /**
@@ -208,14 +229,18 @@ public final class ItemPhysicsEngine {
     }
 
     /**
-     * Apply rest detection — items with near-zero velocity go to sleep.
+     * Apply rest detection — items with near-zero velocity for N ticks go to sleep.
+     * Uses the config's itemPhysicsRestThreshold.
      */
     private static void applyRestDetection(ItemEntity item, PhysicsConfig cfg) {
         double horizontalSpeed = Math.abs(item.getDeltaMovement().x)
                                + Math.abs(item.getDeltaMovement().z);
         double verticalSpeed = Math.abs(item.getDeltaMovement().y);
 
-        if (horizontalSpeed < 0.01 && verticalSpeed < 0.01 && item.onGround()) {
+        boolean isNearlyStationary = horizontalSpeed < 0.01 && verticalSpeed < 0.01;
+
+        if (isNearlyStationary && item.onGround()) {
+            // Zero out tiny residual velocity immediately
             if (horizontalSpeed < 0.005 && verticalSpeed < 0.005) {
                 item.setDeltaMovement(0, 0, 0);
             }

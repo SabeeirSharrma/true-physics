@@ -22,6 +22,12 @@ public final class ConfigLoaderImpl {
             cfgItemActive, cfgItemRest,
             cfgCaveCooldown, cfgCaveBlocks, cfgCaveRadius,
             cfgDiagInterval;
+    private static ModConfigSpec.DoubleValue
+            cfgBounceFactor, cfgFrictionScale;
+    private static ModConfigSpec.BooleanValue
+            cfgVanillaFlow;
+    private static ModConfigSpec.ConfigValue<String>
+            cfgSwimmingItems, cfgUndestroyableItems;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -52,11 +58,23 @@ public final class ConfigLoaderImpl {
                               .defineInRange("maxDistance", 0, 0, 256);
         b.pop();
 
-        b.comment("Item physics budgets").push("itemPhysics");
+        b.comment("Item physics budgets and tuning").push("itemPhysics");
         cfgItemActive = b.comment("Max concurrently physics-active items")
                          .defineInRange("maxActive", 64, 8, 1024);
         cfgItemRest   = b.comment("Ticks before a near-stationary item sleeps")
                          .defineInRange("restThreshold", 40, 5, 200);
+        cfgBounceFactor = b.comment("Global bounce multiplier (0 = no bounce, 1 = full)")
+                           .defineInRange("bounceFactor", 1.0, 0.0, 2.0);
+        cfgFrictionScale = b.comment("Global friction multiplier (0 = frictionless, 1 = normal, 2 = double)")
+                            .defineInRange("frictionScale", 1.0, 0.0, 3.0);
+        cfgVanillaFlow = b.comment("Use vanilla fluid flow behavior instead of custom viscosity")
+                          .define("vanillaFlow", false);
+        cfgSwimmingItems = b.comment("Comma-separated item IDs that float/swim upward in water")
+                            .define("swimmingItems",
+                                "oak_boat,spruce_boat,birch_boat,jungle_boat,acacia_boat,dark_oak_boat,mangrove_boat,boat,bamboo_raft,chest_boat");
+        cfgUndestroyableItems = b.comment("Comma-separated item IDs immune to fire/lava/damage")
+                                 .define("undestroyableItems",
+                                     "nether_star,bedrock,obsidian,barrier");
         b.pop();
 
         b.comment("Cave-in budgets").push("caveins");
@@ -100,6 +118,11 @@ public final class ConfigLoaderImpl {
 
         c.itemPhysicsMaxActive      = cfgItemActive.get();
         c.itemPhysicsRestThreshold  = cfgItemRest.get();
+        c.itemPhysicsBounceFactor   = cfgBounceFactor.get().floatValue();
+        c.itemPhysicsFrictionScale  = cfgFrictionScale.get().floatValue();
+        c.itemPhysicsVanillaFlow    = cfgVanillaFlow.get();
+        c.itemPhysicsSwimmingItems  = cfgSwimmingItems.get();
+        c.itemPhysicsUndestroyableItems = cfgUndestroyableItems.get();
 
         c.caveinScanCooldown        = cfgCaveCooldown.get();
         c.caveinMaxBlocksPerEvent   = cfgCaveBlocks.get();

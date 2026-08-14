@@ -9,6 +9,7 @@ import com.sabcancode.truephysics.core.collapse.CollapseHandler;
 import com.sabcancode.truephysics.core.collapse.FallingBlockCollapseHandler;
 import com.sabcancode.truephysics.core.graph.BfsSupportGraph;
 import com.sabcancode.truephysics.core.graph.SupportGraph;
+import com.sabcancode.truephysics.core.item.ItemPhysicsEngine;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -95,6 +96,9 @@ public final class TruePhysicsCore {
     public void tick() {
         PhysicsConfig cfg = PhysicsConfigHolder.get();
         if (!cfg.structuralCollapseEnabled) return;
+
+        // Reset item physics active counter each tick
+        ItemPhysicsEngine.resetActiveCount();
 
         // 1) Recompute dirty chunks (respects bfs/tick budget)
         graph.tick();
