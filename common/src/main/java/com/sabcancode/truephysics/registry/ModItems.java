@@ -5,6 +5,8 @@ import com.sabcancode.truephysics.TruePhysics;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 
@@ -22,6 +24,8 @@ public final class ModItems {
             ITEMS.register("support_beam", () -> new BlockItem(
                     ModBlocks.SUPPORT_BEAM.get(),
                     new Item.Properties()
+                            .setId(ResourceKey.create(Registries.ITEM,
+                                    Identifier.tryBuild(TruePhysics.MOD_ID, "support_beam")))
             ));
 
     /** Call from each platform entrypoint to register items. */

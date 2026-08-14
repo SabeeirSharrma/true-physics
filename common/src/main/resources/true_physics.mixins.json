@@ -4,8 +4,16 @@
   "compatibilityLevel": "JAVA_25",
   "minVersion": "0.8",
   "client": [
+    "ItemEntityRendererMixin",
+    "ItemEntityRenderStateMixin",
+    "EntityAccessor",
+    "ItemEntityMixinClient",
+    "ItemStackRenderStateAccessor",
+    "LayerRenderStateAccessor"
   ],
   "mixins": [
+    "ItemEntityPhysicsMixin",
+    "ItemEntityAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

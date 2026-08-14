@@ -32,6 +32,16 @@ public final class PhysicsConfig {
     public int itemPhysicsMaxActive        = 64;
     /** Ticks an item must be nearly stationary before sleep. */
     public int itemPhysicsRestThreshold    = 40;
+    /** Global bounce multiplier for all items (0 = no bounce, 1 = full bounce). */
+    public float itemPhysicsBounceFactor   = 1.0F;
+    /** Global friction multiplier (0 = frictionless, 1 = normal, 2 = double friction). */
+    public float itemPhysicsFrictionScale = 1.0F;
+    /** Use vanilla fluid flow behavior (false = custom viscosity-based). */
+    public boolean itemPhysicsVanillaFlow  = false;
+    /** Items that float/swim upward in water (comma-separated item IDs). */
+    public String itemPhysicsSwimmingItems = "oak_boat,spruce_boat,birch_boat,jungle_boat,acacia_boat,dark_oak_boat,mangrove_boat,boat,bamboo_raft,chest_boat";
+    /** Items that are immune to fire/lava damage (comma-separated item IDs). */
+    public String itemPhysicsUndestroyableItems = "nether_star,bedrock,obsidian,barrier";
 
     // ─── Cave-in budgets (M7) ──────────────────────────────────────
     /** Ticks between cave-in scans for the same chunk region. */

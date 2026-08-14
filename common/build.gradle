@@ -11,6 +11,9 @@ dependencies {
     // Architectury API. This is optional, and you can comment it out if you don't need it.
     implementation "dev.architectury:architectury:$rootProject.architectury_api_version"
 
+    // CreativeCore — provides friction, viscosity, config, and rendering APIs
+    implementation "curse.maven:creativecore-257814:8299367"
+
     // Unit tests
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.10.2"

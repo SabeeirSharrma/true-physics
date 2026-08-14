@@ -67,10 +67,17 @@ public final class BfsSupportGraph implements SupportGraph {
         PhysicsConfig cfg = PhysicsConfigHolder.get();
         int processed = 0;
 
-        var iterator = dirtyChunks.iterator();
-        while (iterator.hasNext() && processed < cfg.structuralMaxBfsPerTick) {
-            long packed = iterator.next();
-            iterator.remove();
+        // Snapshot to avoid ConcurrentModificationException
+        // (recomputeChunk → markNeighborChunksDirty adds back to dirtyChunks)
+        List<Long> snapshot = new ArrayList<>(dirtyChunks);
+        dirtyChunks.clear();
+
+        for (long packed : snapshot) {
+            if (processed >= cfg.structuralMaxBfsPerTick) {
+                // Put remaining back
+                dirtyChunks.addAll(snapshot.subList(processed, snapshot.size()));
+                break;
+            }
             recomputeChunk(ChunkPos.unpack(packed));
             processed++;
         }
