@@ -1,17 +1,15 @@
 modLoader = "javafml"
 loaderVersion = "[1,)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+license = "LGPL-3.0"
 
 [[mods]]
 modId = "true_physics"
 version = "${version}"
 displayName = "True Physics"
-authors = "Me!"
+authors = "Sabeeir"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+Real-world-style physics for Minecraft: structural integrity, item physics, ocean currents, and cave-ins.
 '''
-#logoFile = ""
 
 [[dependencies.true_physics]]
 modId = "neoforge"

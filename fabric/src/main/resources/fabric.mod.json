@@ -3,23 +3,23 @@
   "id": "true_physics",
   "version": "${version}",
   "name": "True Physics",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "Real-world-style physics for Minecraft: structural integrity, item physics, ocean currents, and cave-ins.",
   "authors": [
-    "Me!"
+    "Sabeeir"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/sabeeir/truephysics",
+    "sources": "https://github.com/sabeeir/truephysics"
   },
-  "license": "CC0-1.0",
+  "license": "LGPL-3.0",
   "icon": "assets/true_physics/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.sabcancode.truephysics.fabric.ExampleModFabric"
+      "com.sabcancode.truephysics.fabric.TruePhysicsFabric"
     ],
     "client": [
-      "com.sabcancode.truephysics.fabric.client.ExampleModFabricClient"
+      "com.sabcancode.truephysics.fabric.client.TruePhysicsFabricClient"
     ]
   },
   "mixins": [
@@ -31,8 +31,5 @@
     "java": ">=25",
     "architectury": ">=21.0.7",
     "fabric-api": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }
